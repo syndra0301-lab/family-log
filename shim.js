@@ -126,12 +126,25 @@ window.__importAll = async data => {
   if (!data || !data.trips) throw { code: 'bad_file' };
   const ops = [];
   for (const id in data.trips) {
-    const t = data.trips[id]; if (t.doc) ops.push(['trips/' + id, t.doc]);
-    for (const k of SUBS) for (const d in (t[k] || {})) ops.push(['trips/' + id + '/' + k + '/' + d, t[k][d]]);
+    const t = data.trips[id]; if (t.doc) ops.push(['set', 'trips/' + id, t.doc]);
+    for (const k of SUBS) {
+      const docs = t[k] || {};
+      // keep photos/links someone already attached in the app when a file rewrites that item
+      if (t.keepAttachments && Object.keys(docs).length) {
+        const cur = await readCol('trips/' + id + '/' + k);
+        for (const d in docs) { const c = cur[d]; if (!c) continue;
+          if (c.photos && c.photos.length && !(docs[d].photos && docs[d].photos.length)) docs[d].photos = c.photos;
+          if (c.url && !docs[d].url) docs[d].url = c.url; }
+      }
+      for (const d in docs) ops.push(['set', 'trips/' + id + '/' + k + '/' + d, docs[d]]);
+      for (const d of (t['remove_' + k] || [])) if (!(d in docs)) ops.push(['del', 'trips/' + id + '/' + k + '/' + d]);
+    }
   }
-  for (const d in (data.ideas || {})) ops.push(['ideas/' + d, data.ideas[d]]);
+  for (const d in (data.ideas || {})) ops.push(['set', 'ideas/' + d, data.ideas[d]]);
   for (let i = 0; i < ops.length; i += 400) {
-    const b = writeBatch(fs); ops.slice(i, i + 400).forEach(([p, d]) => b.set(doc(fs, base + p), d)); await b.commit();
+    const b = writeBatch(fs);
+    ops.slice(i, i + 400).forEach(([op, p, d]) => op === 'del' ? b.delete(doc(fs, base + p)) : b.set(doc(fs, base + p), d));
+    await b.commit();
   }
   return ops.length;
 };
