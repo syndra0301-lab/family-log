@@ -126,7 +126,7 @@ window.__importAll = async data => {
   if (!data || !data.trips) throw { code: 'bad_file' };
   const ops = [];
   for (const id in data.trips) {
-    const t = data.trips[id]; ops.push(['trips/' + id, t.doc]);
+    const t = data.trips[id]; if (t.doc) ops.push(['trips/' + id, t.doc]);
     for (const k of SUBS) for (const d in (t[k] || {})) ops.push(['trips/' + id + '/' + k + '/' + d, t[k][d]]);
   }
   for (const d in (data.ideas || {})) ops.push(['ideas/' + d, data.ideas[d]]);
