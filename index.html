@@ -433,10 +433,11 @@ function whoLine(){const n=window.__familyName&&window.__familyName();if(!n||S.d
 async function doExport(){try{const d=await window.__exportAll();const b=new Blob([JSON.stringify(d,null,1)],{type:'application/json'});
   const a=h('a',{href:URL.createObjectURL(b),download:'모녀발자국-백업-'+today()+'.json'});document.body.append(a);a.click();a.remove();toast('백업 파일을 저장했어요');}catch(e){console.warn(e);toast(errMsg(e));}}
 function doImport(file){if(!file)return;guard(async()=>{let d;try{d=JSON.parse(await file.text());}catch(e){throw {code:'bad_file'};}const n=await window.__importAll(d);setTimeout(()=>toast(n+'개 항목을 가져왔어요'),50);});}
-function backupBox(){if(!canAdd())return null;const inp=h('input',{type:'file',accept:'application/json,.json',hidden:true,onchange:e=>doImport(e.target.files[0])});
+function importInput(){let el=document.getElementById('import-file');if(!el){el=h('input',{type:'file',id:'import-file',accept:'application/json,.json',hidden:true,onchange:e=>{const f=e.target.files[0];e.target.value='';doImport(f);}});document.body.append(el);}return el;}
+function backupBox(){if(!canAdd())return null;const inp=importInput();
   return h('details',{class:'panel',style:'margin-top:8px'},h('summary',null,'백업 · 가져오기'),
     h('p',{class:'muted',style:'font-size:13px'},'기록 전체를 파일 하나로 저장하거나, 저장해 둔 파일을 다시 넣을 수 있어요. 같은 항목은 파일 내용으로 덮어써요.'),
-    h('div',{class:'backup'},h('button',{class:'btn ghost small',onclick:doExport},'백업 파일 저장'),h('button',{class:'btn ghost small',onclick:()=>inp.click()},'파일에서 가져오기'),inp));}
+    h('div',{class:'backup'},h('button',{class:'btn ghost small',onclick:doExport},'백업 파일 저장'),h('button',{class:'btn ghost small',onclick:()=>importInput().click()},'파일에서 가져오기')));}
 function viewHome(){const out=[];const wl=whoLine();if(wl)out.push(wl);const ts=[...S.trips].sort((a,b)=>(b.start||'').localeCompare(a.start||''));
   const nTrip=ts.filter(t=>t.kind!=='체험').length,nExp=ts.filter(t=>t.kind==='체험').length;
   out.push(h('div',{class:'stats'},h('span',null,h('b',null,nTrip),'번의 여행'),h('span',null,h('b',null,nExp),'번의 체험')));
