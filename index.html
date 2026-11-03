@@ -200,6 +200,14 @@ input.bad{border-color:var(--danger);box-shadow:0 0 0 2px color-mix(in srgb,var(
 .info{display:grid;grid-template-columns:96px 1fr;gap:8px 12px;font-size:14px}
 .info dt{color:var(--muted);font-size:13px;font-weight:600}
 .info dd{margin:0;min-width:0;overflow-wrap:anywhere}
+@media (max-width:560px){
+  .day{grid-template-columns:1fr;gap:6px}
+  .rail{flex-direction:row;align-items:baseline;gap:8px;padding:6px 2px;position:sticky;top:0;z-index:2;background:var(--bg)}
+  .rail .d{font-size:18px}.rail .line{display:none}
+  .item{padding:10px;gap:8px}
+  .item .ic{width:24px;height:24px;border-radius:6px}.item .ic svg{width:14px;height:14px}
+  .pass .main{padding:10px 12px}.pass .stub{padding:10px;min-width:72px}
+}
 @media (max-width:440px){.grid2{grid-template-columns:1fr}.sum b{font-size:15px}.cat{grid-template-columns:64px 1fr auto}.tcard{grid-template-columns:60px 1fr}.tcard .go{display:none}h1{font-size:26px}}
 @media (prefers-reduced-motion:no-preference){.tcard,.btn{transition:border-color .15s,opacity .15s}}
 .who-pick{position:fixed;inset:0;background:rgba(10,14,24,.45);display:grid;place-items:center;padding:16px;z-index:50}
