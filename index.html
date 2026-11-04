@@ -677,6 +677,7 @@ function viewTrip(){const t=curTrip();const out=[h('button',{class:'link back',o
   if(S.canEdit){out.push(S.confirm==='trip'?h('div',{class:'panel'},h('p',null,'이 여행과 안의 일정·기록을 모두 지울까요? 되돌릴 수 없어요.'),
       h('div',{class:'row end'},h('button',{class:'btn ghost',onclick:()=>{S.confirm=null;render();}},'취소'),h('button',{class:'btn danger',onclick:removeTrip},'모두 지우기')))
     :h('button',{class:'del',style:'align-self:flex-start',onclick:()=>{S.confirm='trip';render();}},'이 기록 지우기'));}
+  {const bb=backupBox();if(bb)out.push(bb);}
   return out;}
 
 /* ---------- ideas (앱 개선 요청함) ---------- */
